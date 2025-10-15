@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: 'Laravel API Documentation'
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+tags:
+  -
+    name: Authentification
+    description: ''
+paths:
+  /api/auth/register:
+    post:
+      summary: "Inscription (Envoi du code d’activation)\n\nCette route permet à un utilisateur de s’inscrire.  \nUn code d’activation de 6 chiffres sera envoyé par email avant l’activation du compte."
+      operationId: inscriptionEnvoiDuCodeDactivationCetteRoutePermetUnUtilisateurDeSinscrireUnCodeDactivationDe6ChiffresSeraEnvoyParEmailAvantLactivationDuCompte
+      description: ''
+      parameters: []
+      responses:
+        201:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Compte créé. Vérifiez votre e-mail pour le code d’activation.'
+                  user:
+                    id: 1
+                    email: alice@example.com
+                properties:
+                  message:
+                    type: string
+                    example: 'Compte créé. Vérifiez votre e-mail pour le code d’activation.'
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: alice@example.com
+      tags:
+        - Authentification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Nom complet de l’utilisateur. Exemple: Alice Dupont'
+                  example: consequatur
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Adresse email valide et unique. Exemple: alice@example.com'
+                  example: qkunze@example.com
+                  nullable: false
+                password:
+                  type: string
+                  description: 'Mot de passe d’au moins 6 caractères. Exemple: secret123'
+                  example: 'O[2UZ5ij-e/dl4m{o,'
+                  nullable: false
+                password_confirmation:
+                  type: string
+                  description: 'Confirmation du mot de passe. Exemple: secret123'
+                  example: consequatur
+                  nullable: false
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+      security: []
+  /api/auth/verify-code:
+    post:
+      summary: "Vérification du code d’activation\n\nCette route permet à l’utilisateur de valider le code reçu par e-mail."
+      operationId: vrificationDuCodeDactivationCetteRoutePermetLutilisateurDeValiderLeCodeReuParEMail
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Compte activé avec succès. Vous pouvez maintenant vous connecter.'
+                properties:
+                  message:
+                    type: string
+                    example: 'Compte activé avec succès. Vous pouvez maintenant vous connecter.'
+      tags:
+        - Authentification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Adresse email utilisée lors de l’inscription. Exemple: alice@example.com'
+                  example: qkunze@example.com
+                  nullable: false
+                code_activation:
+                  type: string
+                  description: 'Code à 6 chiffres reçu par e-mail. Exemple: 123456'
+                  example: consequatur
+                  nullable: false
+              required:
+                - email
+                - code_activation
+      security: []
+  /api/auth/resend-code:
+    post:
+      summary: "Renvoyer un nouveau code d’activation\n\nPermet à un utilisateur non vérifié de recevoir un nouveau code d’activation."
+      operationId: renvoyerUnNouveauCodeDactivationPermetUnUtilisateurNonVrifiDeRecevoirUnNouveauCodeDactivation
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Nouveau code envoyé à votre adresse e-mail.'
+                  email: alice@example.com
+                properties:
+                  message:
+                    type: string
+                    example: 'Nouveau code envoyé à votre adresse e-mail.'
+                  email:
+                    type: string
+                    example: alice@example.com
+      tags:
+        - Authentification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Adresse email de l’utilisateur. Exemple: alice@example.com'
+                  example: qkunze@example.com
+                  nullable: false
+              required:
+                - email
+      security: []
+  /api/auth/login:
+    post:
+      summary: "Connexion\n\nCette route permet à un utilisateur activé de se connecter et de recevoir un jeton d’accès (token Bearer)."
+      operationId: connexionCetteRoutePermetUnUtilisateurActivDeSeConnecterEtDeRecevoirUnJetonDaccstokenBearer
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Connexion réussie'
+                  access_token: 1|p6cjhD3t2hA2zP5y8kP6a...
+                  token_type: Bearer
+                  user:
+                    id: 1
+                    name: 'Alice Dupont'
+                    email: alice@example.com
+                    role: client
+                properties:
+                  message:
+                    type: string
+                    example: 'Connexion réussie'
+                  access_token:
+                    type: string
+                    example: 1|p6cjhD3t2hA2zP5y8kP6a...
+                  token_type:
+                    type: string
+                    example: Bearer
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Alice Dupont'
+                      email:
+                        type: string
+                        example: alice@example.com
+                      role:
+                        type: string
+                        example: client
+      tags:
+        - Authentification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Adresse email de l’utilisateur. Exemple: alice@example.com'
+                  example: qkunze@example.com
+                  nullable: false
+                password:
+                  type: string
+                  description: 'Mot de passe de l’utilisateur. Exemple: secret123'
+                  example: 'O[2UZ5ij-e/dl4m{o,'
+                  nullable: false
+              required:
+                - email
+                - password
+      security: []
+  /api/me:
+    get:
+      summary: "Profil utilisateur connecté\n\nPermet de récupérer les informations de l’utilisateur connecté via le token."
+      operationId: profilUtilisateurConnectPermetDeRcuprerLesInformationsDeLutilisateurConnectViaLeToken
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 1
+                  name: 'Alice Dupont'
+                  email: alice@example.com
+                  role: client
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: 'Alice Dupont'
+                  email:
+                    type: string
+                    example: alice@example.com
+                  role:
+                    type: string
+                    example: client
+      tags:
+        - Authentification
+  /api/logout:
+    post:
+      summary: "Déconnexion\n\nSupprime le token d’accès actuel."
+      operationId: dconnexionSupprimeLeTokenDaccsActuel
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Déconnexion réussie'
+                properties:
+                  message:
+                    type: string
+                    example: 'Déconnexion réussie'
+      tags:
+        - Authentification

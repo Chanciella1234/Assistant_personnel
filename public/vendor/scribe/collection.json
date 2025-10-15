@@ -1,0 +1,244 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost"
+        }
+    ],
+    "info": {
+        "name": "Laravel API Documentation",
+        "_postman_id": "ad8f5ca5-a7ca-48ae-938f-1761efb60129",
+        "description": "",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentification",
+            "description": "",
+            "item": [
+                {
+                    "name": "Inscription (Envoi du code d\u2019activation)\n\nCette route permet \u00e0 un utilisateur de s\u2019inscrire.  \nUn code d\u2019activation de 6 chiffres sera envoy\u00e9 par email avant l\u2019activation du compte.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/register",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/register"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"consequatur\",\"email\":\"qkunze@example.com\",\"password\":\"O[2UZ5ij-e\\\/dl4m{o,\",\"password_confirmation\":\"consequatur\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 201,
+                            "body": "{\n \"message\": \"Compte cr\u00e9\u00e9. V\u00e9rifiez votre e-mail pour le code d\u2019activation.\",\n \"user\": {\n     \"id\": 1,\n     \"email\": \"alice@example.com\"\n }\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "V\u00e9rification du code d\u2019activation\n\nCette route permet \u00e0 l\u2019utilisateur de valider le code re\u00e7u par e-mail.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/verify-code",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/verify-code"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\",\"code_activation\":\"consequatur\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n \"message\": \"Compte activ\u00e9 avec succ\u00e8s. Vous pouvez maintenant vous connecter.\"\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Renvoyer un nouveau code d\u2019activation\n\nPermet \u00e0 un utilisateur non v\u00e9rifi\u00e9 de recevoir un nouveau code d\u2019activation.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/resend-code",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/resend-code"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n \"message\": \"Nouveau code envoy\u00e9 \u00e0 votre adresse e-mail.\",\n \"email\": \"alice@example.com\"\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Connexion\n\nCette route permet \u00e0 un utilisateur activ\u00e9 de se connecter et de recevoir un jeton d\u2019acc\u00e8s (token Bearer).",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/login"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\",\"password\":\"O[2UZ5ij-e\\\/dl4m{o,\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n \"message\": \"Connexion r\u00e9ussie\",\n \"access_token\": \"1|p6cjhD3t2hA2zP5y8kP6a...\",\n \"token_type\": \"Bearer\",\n \"user\": {\n     \"id\": 1,\n     \"name\": \"Alice Dupont\",\n     \"email\": \"alice@example.com\",\n     \"role\": \"client\"\n }\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Profil utilisateur connect\u00e9\n\nPermet de r\u00e9cup\u00e9rer les informations de l\u2019utilisateur connect\u00e9 via le token.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/me",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/me"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n \"id\": 1,\n \"name\": \"Alice Dupont\",\n \"email\": \"alice@example.com\",\n \"role\": \"client\"\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "D\u00e9connexion\n\nSupprime le token d\u2019acc\u00e8s actuel.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/logout",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/logout"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n \"message\": \"D\u00e9connexion r\u00e9ussie\"\n}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "noauth"
+    }
+}
