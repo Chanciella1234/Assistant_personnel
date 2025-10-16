@@ -32,6 +32,16 @@ class Activity extends Model
         return $this->belongsTo(User::class);
     }
 
+     /**
+     * Relation avec les taches
+     */
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+
     /**
      * Mettre à jour automatiquement le statut selon la date/heure
      */

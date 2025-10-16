@@ -27,11 +27,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('activities/{id}/pause', [App\Http\Controllers\Api\ActivityController::class, 'pause']);
     Route::patch('activities/{id}/resume', [App\Http\Controllers\Api\ActivityController::class, 'resume']);
 });
-
-
-
-
-
-
-
-

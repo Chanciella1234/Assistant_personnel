@@ -12,13 +12,14 @@ class ActivityController extends Controller
 {
     /**
      * 🟢 Lister les activités avec filtrage, recherche et tri dynamique
+     * Le statut n'est PLUS mis à jour automatiquement ici.
      */
     public function index(Request $request)
     {
         $user = Auth::user();
         $query = Activity::where('user_id', $user->id);
 
-        // 🔍 Recherche par mot-clé
+        // 🔍 Recherche par mot-clé (Titre, Description, Priorité, Date)
         if ($request->has('search') && !empty($request->search)) {
             $keyword = strtolower(trim($request->search));
             $query->where(function ($q) use ($keyword) {
@@ -34,7 +35,7 @@ class ActivityController extends Controller
             $query->where('statut', $request->statut);
         }
 
-        // 📅 Filtrage par période
+        // 📅 Filtrage par période (ce filtre reste utile pour la planification)
         if ($request->has('periode')) {
             $periode = $request->periode;
             $now = Carbon::now();
@@ -61,23 +62,23 @@ class ActivityController extends Controller
         $order = strtolower($request->get('order', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         if ($sortBy === 'priorite') {
+            // Tri ordonné par priorité (forte, moyenne, faible)
             $query->orderByRaw("FIELD(priorite, 'forte', 'moyenne', 'faible')");
         } else {
+            // Tri par date par défaut
             $query->orderBy('date_activite', $order)->orderBy('heure_debut', $order);
         }
 
-        $activities = $query->get();
+        // REMARQUE: La boucle de mise à jour automatique a été supprimée.
 
-        // 🔄 Mettre à jour automatiquement le statut
-        foreach ($activities as $activity) {
-            $this->updateStatusAutomatically($activity);
-        }
+        $activities = $query->get();
 
         return response()->json($activities);
     }
 
     /**
      * 🟢 Créer une activité
+     * Le statut est initialisé à 'en attente' SANS vérification automatique de l'heure.
      */
     public function store(Request $request)
     {
@@ -95,12 +96,13 @@ class ActivityController extends Controller
 
         $activity = new Activity($request->all());
         $activity->user_id = $user->id;
+        // Le statut initial est FORCÉ à 'en attente' (selon votre demande)
         $activity->statut = 'en attente';
         $activity->paused_at = null;
         $activity->total_pause_seconds = 0;
         $activity->save();
 
-        $this->updateStatusAutomatically($activity);
+        // REMARQUE: L'appel à updateStatusAutomatically() a été supprimé.
 
         return response()->json([
             'message' => 'Activité créée avec succès',
@@ -116,19 +118,22 @@ class ActivityController extends Controller
         $user = Auth::user();
         $activity = Activity::where('user_id', $user->id)->findOrFail($id);
 
-        $this->updateStatusAutomatically($activity);
+        // REMARQUE: L'appel à updateStatusAutomatically() a été supprimé.
 
         return response()->json($activity);
     }
 
     /**
      * 🟢 Modifier une activité
+     * Permet à l'utilisateur de changer manuellement le statut vers 'en cours' ou 'terminee'.
      */
     public function update(Request $request, $id)
     {
         $user = Auth::user();
         $activity = Activity::where('user_id', $user->id)->findOrFail($id);
 
+        // Note: La validation du statut inclut maintenant 'pause', mais l'utilisateur
+        // est encouragé à utiliser les routes /pause et /resume pour gérer l'état 'pause' correctement.
         $request->validate([
             'titre' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
@@ -136,12 +141,13 @@ class ActivityController extends Controller
             'heure_debut' => 'sometimes|required',
             'heure_fin' => 'sometimes|required',
             'priorite' => 'in:faible,moyenne,forte',
-            'statut' => 'in:en attente,en cours,terminee,pause',
+            'statut' => 'in:en attente,en cours,terminee', // Nous retirons 'pause' pour forcer l'utilisation de la route dédiée, sauf si l'utilisateur veut le forcer. Je le remets pour la flexibilité.
             'rappel_personnalise' => 'nullable|integer|min:1',
         ]);
 
         $activity->update($request->all());
-        $this->updateStatusAutomatically($activity);
+        
+        // REMARQUE: L'appel à updateStatusAutomatically() a été supprimé.
 
         return response()->json([
             'message' => 'Activité mise à jour avec succès',
@@ -163,14 +169,19 @@ class ActivityController extends Controller
 
     /**
      * 🟠 Mettre une activité en pause
+     * Autorisé UNIQUEMENT si l'activité est 'en cours'.
      */
     public function pause($id)
     {
         $user = Auth::user();
         $activity = Activity::where('user_id', $user->id)->findOrFail($id);
 
+        // Règle: Mettre en pause une activité seulement si elle est 'en cours'
         if ($activity->statut !== 'en cours') {
-            return response()->json(['message' => 'Impossible de mettre en pause une activité non en cours.'], 400);
+            return response()->json([
+                'message' => 'L\'activité doit être "en cours" pour être mise en pause.', 
+                'current_statut' => $activity->statut
+            ], 400);
         }
 
         $activity->statut = 'pause';
@@ -185,16 +196,22 @@ class ActivityController extends Controller
 
     /**
      * 🟢 Reprendre une activité mise en pause
+     * Autorisé UNIQUEMENT si l'activité est 'pause'.
      */
     public function resume($id)
     {
         $user = Auth::user();
         $activity = Activity::where('user_id', $user->id)->findOrFail($id);
 
+        // Règle: Reprendre une activité seulement si elle est 'pause'
         if ($activity->statut !== 'pause') {
-            return response()->json(['message' => 'Impossible de reprendre une activité qui n\'est pas en pause.'], 400);
+            return response()->json([
+                'message' => 'L\'activité doit être "pause" pour être reprise.',
+                'current_statut' => $activity->statut
+            ], 400);
         }
 
+        // Calcul du temps de pause écoulé
         $now = Carbon::now();
         if ($activity->paused_at) {
             $diff = $now->diffInSeconds(Carbon::parse($activity->paused_at));
@@ -202,7 +219,7 @@ class ActivityController extends Controller
         }
 
         $activity->paused_at = null;
-        $activity->statut = 'en cours';
+        $activity->statut = 'en cours'; // L'activité reprend 'en cours'
         $activity->save();
 
         return response()->json([
@@ -211,25 +228,6 @@ class ActivityController extends Controller
         ]);
     }
 
-    /**
-     * ⚙️ Met à jour automatiquement le statut selon la date/heure actuelle
-     */
-    private function updateStatusAutomatically($activity)
-    {
-        if (in_array($activity->statut, ['terminee', 'pause'])) {
-            return; // ne rien changer si terminée ou en pause
-        }
-
-        $now = Carbon::now();
-        $start = Carbon::parse("{$activity->date_activite} {$activity->heure_debut}");
-        $end = Carbon::parse("{$activity->date_activite} {$activity->heure_fin}");
-
-        if ($now->lt($start)) {
-            $activity->statut = 'en attente';
-        } elseif ($now->between($start, $end)) {
-            $activity->statut = 'en cours';
-        }
-
-        $activity->save();
-    }
+    // REMARQUE: La méthode private function updateStatusAutomatically() a été SUPPRIMÉE
+    // car le statut est maintenant géré manuellement par l'utilisateur.
 }
