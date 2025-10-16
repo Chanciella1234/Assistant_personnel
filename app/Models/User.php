@@ -36,5 +36,11 @@ class User extends Authenticatable
         'is_verified' => 'boolean',
     ];
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+
     // relations later (activites, feedbacks...)
 }
