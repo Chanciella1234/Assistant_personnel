@@ -13,6 +13,8 @@ class Task extends Model
         'activity_id',
         'titre',
         'description',
+        'date_debut',
+        'date_fin',
         'statut',
     ];
 
