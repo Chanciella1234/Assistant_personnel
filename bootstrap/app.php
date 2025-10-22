@@ -14,11 +14,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->api(prepend: [
-        \Illuminate\Routing\Middleware\ThrottleRequests::class . ':60,1',
-    ]);
-})
+        $middleware->api(prepend: [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':60,1',
+        ]);
+    })
 
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    
+    // ⬆️ FIN DE LA CONFIGURATION DU SCHEDULER ⬆️
+    ->withSchedule(function (Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->command('alertes:generer')->everyMinute();
+    })
+
+
+    ->create();
