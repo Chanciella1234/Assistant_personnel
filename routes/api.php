@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ActiviteController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TacheController;
+use App\Http\Controllers\Api\StatistiquesController;
 
 // Authentication routes
 Route::prefix('auth')->group(function () {
@@ -46,6 +47,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/activites/{activite_id}/taches/{tache_id}/pause', [TacheController::class, 'pause']);
     Route::put('/activites/{activite_id}/taches/{tache_id}/reprendre', [TacheController::class, 'reprendre']);
 });
+
+
+//Statistiques routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/statistiques/activites', [StatistiquesController::class, 'index']);
+});
+
 
 
 
