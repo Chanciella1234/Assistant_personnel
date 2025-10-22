@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ActiviteController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TacheController;
 use App\Http\Controllers\Api\StatistiquesController;
+use App\Http\Controllers\Api\CommentaireController;
 
 // Authentication routes
 Route::prefix('auth')->group(function () {
@@ -53,6 +54,15 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/statistiques/activites', [StatistiquesController::class, 'index']);
 });
+
+//Commentaires routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/commentaires', [CommentaireController::class, 'index']);
+    Route::post('/commentaires', [CommentaireController::class, 'store']);
+    Route::put('/commentaires/{id}', [CommentaireController::class, 'update']);
+    Route::delete('/commentaires/{id}', [CommentaireController::class, 'destroy']);
+});
+
 
 
 
