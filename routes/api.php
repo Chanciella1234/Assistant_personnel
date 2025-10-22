@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TacheController;
 use App\Http\Controllers\Api\StatistiquesController;
 use App\Http\Controllers\Api\CommentaireController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminStatistiquesController;
 
 // Authentication routes
 Route::prefix('auth')->group(function () {
@@ -62,6 +64,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/commentaires/{id}', [CommentaireController::class, 'update']);
     Route::delete('/commentaires/{id}', [CommentaireController::class, 'destroy']);
 });
+
+
+//Admin routes
+Route::middleware('auth:sanctum')->group(function () {
+    // 🟢 Routes Admin (lecture seule)
+    Route::get('/admin/utilisateurs', [AdminController::class, 'index']);
+    Route::get('/admin/utilisateurs/{id}', [AdminController::class, 'show']);
+});
+
+
+//Statistiques npour Admin routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin/statistiques', [AdminStatistiquesController::class, 'index']);
+});
+
+
 
 
 

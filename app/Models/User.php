@@ -40,9 +40,9 @@ class User extends Authenticatable
     /**
      * Relation: user -> activities (1:N)
      */
-    public function activities()
+    public function activites()
     {
-        return $this->hasMany(Activity::class);
+        return $this->hasMany(Activite::class);
     }
 
     /**
@@ -50,9 +50,9 @@ class User extends Authenticatable
      * (si tu as les tâches directement liées à l'utilisateur; sinon tu peux
      * t'en servir via $user->activities()->with('tasks') dans les requêtes)
      */
-    public function tasks()
+    public function taches()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Tache::class);
     }
 
     /**
@@ -66,10 +66,11 @@ class User extends Authenticatable
     /**
      * Relation: user -> feedbacks (1:N)
      */
-    public function feedbacks()
+    public function commentaires()
     {
-        return $this->hasMany(Feedback::class);
+        return $this->hasMany(Commentaire::class);
     }
+
 
     /**
      * Personnalise la façon dont Laravel envoie les mails à cet utilisateur.
