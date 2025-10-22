@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\StatistiquesController;
 use App\Http\Controllers\Api\CommentaireController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminStatistiquesController;
+use App\Http\Controllers\Api\AlerteController;
+
 
 // Authentication routes
 Route::prefix('auth')->group(function () {
@@ -78,6 +80,16 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/statistiques', [AdminStatistiquesController::class, 'index']);
 });
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    // 🔔 Alertes personnalisées
+    Route::get('/activites/{id}/rappel', [AlerteController::class, 'show']);
+    Route::post('/activites/{id}/rappel', [AlerteController::class, 'setRappel']);
+    Route::delete('/activites/{id}/rappel', [AlerteController::class, 'deleteRappel']);
+});
+
 
 
 

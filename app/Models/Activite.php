@@ -18,6 +18,7 @@ class Activite extends Model
         'date_fin_activite',
         'priorite',
         'statut',
+        'rappel_personnalise'
     ];
 
     protected $casts = [
@@ -41,6 +42,15 @@ class Activite extends Model
     {
         return $this->hasMany(Tache::class);
     }
+
+     /**
+     * Relation : une alerte appartient à une activité
+     */
+    public function alerte()
+    {
+        return $this->hasMany(Alerte::class);
+    }
+
 
 
     /**

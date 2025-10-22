@@ -78,21 +78,36 @@ class ActiviteController extends Controller
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date_debut_activite' => 'required|date',
+            'date_debut_activite' => 'required|date|after:now',
             'date_fin_activite' => 'required|date|after:date_debut_activite',
-            'priorite' => 'required|in:faible,moyenne,forte',
+            'priorite' => 'required|in:forte,moyenne,faible',
+            'rappel_personnalise' => 'nullable|integer|min:10|max:10080' // en minutes (jusqu’à 7 jours)
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['statut'] = 'en attente';
-
-        $activite = Activite::create($validated);
+        $activite = Activite::create([
+            'user_id' => Auth::id(),
+            'titre' => $validated['titre'],
+            'description' => $validated['description'] ?? null,
+            'date_debut_activite' => $validated['date_debut_activite'],
+            'date_fin_activite' => $validated['date_fin_activite'],
+            'priorite' => $validated['priorite'],
+            'statut' => 'en attente',
+            'rappel_personnalise' => $validated['rappel_personnalise'] ?? null,
+        ]);
 
         return response()->json([
             'message' => 'Activité créée avec succès.',
-            'data' => $activite,
+            'data' => [
+                'id' => $activite->id,
+                'titre' => $activite->titre,
+                'date_debut_activite' => $activite->date_debut_activite,
+                'rappel_personnalise' => $activite->rappel_personnalise
+                    ? "{$activite->rappel_personnalise} minutes"
+                    : "Aucun (10 minutes par défaut)",
+            ]
         ], 201);
     }
+
 
     /**
      * 🟢 Afficher une activité
@@ -118,22 +133,22 @@ class ActiviteController extends Controller
         $activite = Activite::where('user_id', Auth::id())->findOrFail($id);
 
         $validated = $request->validate([
-            'titre' => 'sometimes|string|max:255',
+            'titre' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date_debut_activite' => 'sometimes|date',
-            'date_fin_activite' => 'sometimes|date|after:date_debut_activite',
-            'priorite' => 'sometimes|in:faible,moyenne,forte',
-            'statut' => 'sometimes|in:en attente,en cours,pause,terminee',
+            'date_debut_activite' => 'required|date|after:now',
+            'date_fin_activite' => 'required|date|after:date_debut_activite',
+            'priorite' => 'required|in:forte,moyenne,faible',
+            'rappel_personnalise' => 'nullable|integer|min:10|max:10080'
         ]);
 
         $activite->update($validated);
-        $activite->mettreAJourStatut();
 
         return response()->json([
             'message' => 'Activité mise à jour avec succès.',
-            'data' => $activite,
+            'data' => $activite
         ]);
     }
+
 
     /**
      * 🟢 Supprimer une activité
