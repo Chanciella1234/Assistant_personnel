@@ -1,16 +1,28 @@
 @component('mail::message')
-# Bonjour {{ $name }},
+# 👋 Bonjour {{ $name }},
 
-Merci de vous être inscrit sur **Assistant Personnel Automatisé** !
+Merci de vous être inscrit sur **LifePlanner** — votre nouvel assistant personnel automatisé 💡  
 
-Voici votre **code d’activation à 6 chiffres :**
+Nous sommes ravis de vous accueillir parmi nous !  
+Avant de commencer à planifier vos activités, veuillez **confirmer votre compte** avec le code ci-dessous :
 
 @component('mail::panel')
-{{ $code }}
+<h2 style="text-align:center; font-size: 28px; letter-spacing: 4px; margin:10px 0; color:#2563eb;">
+    {{ $code }}
+</h2>
 @endcomponent
 
-Veuillez saisir ce code dans l’application pour activer votre compte.
+👉 **Ce code est valable pendant 15 minutes.**  
+Saisissez-le dans l’application pour finaliser votre inscription.
 
-Merci,<br>
-L’équipe Assistant Personnel Automatisé
+
+
+Merci pour votre confiance 💙  
+**L’équipe LifePlanner**
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin-top:30px;">
+
+<!-- <small style="color:#6b7280; display:block; text-align:center;">
+Si vous n’avez pas créé de compte sur LifePlanner, vous pouvez ignorer cet email.
+</small> -->
 @endcomponent

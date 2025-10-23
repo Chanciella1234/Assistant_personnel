@@ -1,16 +1,34 @@
 @component('mail::message')
-# 🔔 Rappel d’activité
+# 🔔 Rappel d’activité à venir
 
-{{ $messageAlerte }}
+Ceci est un petit rappel de votre application **LifePlanner** 🧠  
+Votre activité approche à grands pas ⏰ :
 
-**Titre :** {{ $activite->titre }}  
-**Date de début :** {{ \Carbon\Carbon::parse($activite->date_debut_activite)->format('d/m/Y H:i') }}  
-**Priorité :** {{ ucfirst($activite->priorite) }}
-
-@component('mail::button', ['url' => 'https://votre-application.com'])
-Voir mes activités
+@component('mail::panel')
+<h2 style="text-align:center; color:#2563eb; margin:0;">{{ strtoupper($activite->titre) }}</h2>
+<p style="text-align:center; margin:5px 0; font-size:14px; color:#374151;">
+{{ \Carbon\Carbon::parse($activite->date_debut_activite)->format('d/m/Y à H:i') }}
+</p>
+<p style="text-align:center; color:#6b7280; margin:0;">
+Priorité : <strong style="color:
+@if($activite->priorite == 'forte') #dc2626 
+@elseif($activite->priorite == 'moyenne') #f59e0b 
+@else #16a34a @endif;">
+{{ ucfirst($activite->priorite) }}
+</strong>
+</p>
 @endcomponent
 
-Merci,  
-L’équipe LifePlanner.
+📅 **Message de rappel :**  
+{{ $messageAlerte }}
+
+
+Merci pour votre confiance 💙  
+**L’équipe LifePlanner**
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin-top:30px;">
+<small style="color:#6b7280; display:block; text-align:center;">
+Vous recevez ce message car vous avez activé les rappels d’activités dans LifePlanner.
+</small>
+<!--  -->
 @endcomponent

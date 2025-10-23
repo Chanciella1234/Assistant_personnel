@@ -1,10 +1,18 @@
 @component('mail::message')
-# Bienvenue {{ $name }} 🎉
+# 🎉 Bienvenue, {{ $name }} !
 
-Votre compte a été activé avec succès.
+Votre compte **LifePlanner** a été activé avec succès ✅  
 
-Vous pouvez maintenant commencer à planifier vos activités et tâches avec votre assistant personnel automatisé.
+Nous sommes ravis de vous compter parmi nos utilisateurs !  
+Vous pouvez dès maintenant commencer à **planifier vos activités**, **organiser vos tâches** et **recevoir des rappels automatisé** grâce à votre nouvel assistant personnel automatisé 🧠
 
-Merci,<br>
-L’équipe Assistant Personnel Automatisé
+
+Merci pour votre confiance 💙  
+**L’équipe LifePlanner**
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin-top:30px;">
+
+<!-- <small style="color:#6b7280; display:block; text-align:center;">
+Si vous n’avez pas créé de compte sur LifePlanner, vous pouvez ignorer cet email.
+</small> -->
 @endcomponent

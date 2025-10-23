@@ -45,30 +45,34 @@ class GenererAlertesCommand extends Command
 
     private function envoyerAlerte($activite, $delai, $type)
     {
-        // Vérifie si l’alerte n’a pas déjà été envoyée
+        // Vérifie si l’alerte a déjà été envoyée
         $existe = Alerte::where('activite_id', $activite->id)
             ->where('type', $type)
             ->where('delai_minutes', $delai)
-            ->where('envoyee', false)
+            ->where('envoyee', true)
             ->first();
 
-        if (!$existe) {
-            $message = ($type === 'defaut')
-                ? "Rappel : Votre activité '{$activite->titre}' commence dans 10 minutes."
-                : "Rappel personnalisé : Votre activité '{$activite->titre}' commence dans " . $delai . " minutes.";
-
-            // Envoi email
-            Mail::to($activite->user->email)->send(new AlerteMail($activite, $message));
-
-            // Enregistrement de l’alerte
-            Alerte::create([
-                'activite_id' => $activite->id,
-                'user_id' => $activite->user_id,
-                'type' => $type,
-                'delai_minutes' => $delai,
-                'message' => $message,
-                'envoyee' => true,
-            ]);
+        // 🚫 Si elle existe déjà, on ne fait rien
+        if ($existe) {
+            return;
         }
+
+        // ✅ Sinon, on l’envoie maintenant
+        $message = ($type === 'defaut')
+            ? "Rappel : Votre activité '{$activite->titre}' commence dans 10 minutes."
+            : "Rappel personnalisé : Votre activité '{$activite->titre}' commence dans " . $delai . " minutes.";
+
+        Mail::to($activite->user->email)->send(new AlerteMail($activite, $message));
+
+        // 💾 On enregistre que cette alerte a été envoyée
+        Alerte::create([
+            'activite_id' => $activite->id,
+            'user_id' => $activite->user_id,
+            'type' => $type,
+            'delai_minutes' => $delai,
+            'message' => $message,
+            'envoyee' => true,
+        ]);
     }
+
 }
