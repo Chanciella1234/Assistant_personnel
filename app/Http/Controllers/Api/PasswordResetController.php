@@ -39,7 +39,7 @@ class PasswordResetController extends Controller
             $code = random_int(100000, 999999);
             $user->update([
                 'reset_code' => Hash::make($code),
-                'reset_code_expires_at' => Carbon::now()->addMinutes(15),
+                'reset_code_expires_at' => Carbon::now()->addMinutes(30),
             ]);
 
             try {

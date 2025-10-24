@@ -47,7 +47,7 @@ class ProfileController extends Controller
         // Sauvegarder dans la base
         $user->pending_email = $request->new_email;
         $user->email_verification_code = $code;
-        $user->email_verification_expires_at = Carbon::now()->addMinutes(15);
+        $user->email_verification_expires_at = Carbon::now()->addMinutes(30);
         $user->save();
 
         // Envoi du mail

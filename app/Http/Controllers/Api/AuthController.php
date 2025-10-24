@@ -9,30 +9,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
-    /**
-     * @group Authentification
-     *
-     * Inscription (Envoi du code d’activation)
-     *
-     * Cette route permet à un utilisateur de s’inscrire.  
-     * Un code d’activation de 6 chiffres sera envoyé par email avant l’activation du compte.
-     *
-     * @bodyParam name string required Nom complet de l’utilisateur. Exemple: Alice Dupont
-     * @bodyParam email string required Adresse email valide et unique. Exemple: alice@example.com
-     * @bodyParam password string required Mot de passe d’au moins 6 caractères. Exemple: secret123
-     * @bodyParam password_confirmation string required Confirmation du mot de passe. Exemple: secret123
-     *
-     * @response 201 {
-     *  "message": "Compte créé. Vérifiez votre e-mail pour le code d’activation.",
-     *  "user": {
-     *      "id": 1,
-     *      "email": "alice@example.com"
-     *  }
-     * }
-     */
     public function register(Request $request)
     {
         $request->validate([
@@ -48,6 +28,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'code_activation' => $code,
+            'code_expires_at' => Carbon::now()->addMinutes(30), // ⏰ expire dans 30 min
         ]);
 
         Mail::to($user->email)->send(new ActivationMail($user, $code));
@@ -58,20 +39,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /**
-     * @group Authentification
-     *
-     * Vérification du code d’activation
-     *
-     * Cette route permet à l’utilisateur de valider le code reçu par e-mail.
-     *
-     * @bodyParam email string required Adresse email utilisée lors de l’inscription. Exemple: alice@example.com
-     * @bodyParam code_activation string required Code à 6 chiffres reçu par e-mail. Exemple: 123456
-     *
-     * @response 200 {
-     *  "message": "Compte activé avec succès. Vous pouvez maintenant vous connecter."
-     * }
-     */
     public function verifyCode(Request $request)
     {
         $request->validate([
@@ -85,6 +52,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Compte déjà activé.'], 400);
         }
 
+        // Vérification de l’expiration du code
+        if (Carbon::now()->greaterThan($user->code_expires_at)) {
+            return response()->json(['message' => 'Le code a expiré. Veuillez demander un nouveau code.'], 400);
+        }
+
         if ($user->code_activation != $request->code_activation) {
             return response()->json(['message' => 'Code invalide.'], 400);
         }
@@ -92,6 +64,7 @@ class AuthController extends Controller
         $user->update([
             'is_verified' => true,
             'code_activation' => null,
+            'code_expires_at' => null, // nettoyage
         ]);
 
         Mail::to($user->email)->send(new WelcomeMail($user));
@@ -99,20 +72,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Compte activé avec succès. Vous pouvez maintenant vous connecter.']);
     }
 
-    /**
-     * @group Authentification
-     *
-     * Renvoyer un nouveau code d’activation
-     *
-     * Permet à un utilisateur non vérifié de recevoir un nouveau code d’activation.
-     *
-     * @bodyParam email string required Adresse email de l’utilisateur. Exemple: alice@example.com
-     *
-     * @response 200 {
-     *  "message": "Nouveau code envoyé à votre adresse e-mail.",
-     *  "email": "alice@example.com"
-     * }
-     */
     public function resendCode(Request $request)
     {
         $request->validate([
@@ -126,7 +85,10 @@ class AuthController extends Controller
         }
 
         $newCode = rand(100000, 999999);
-        $user->update(['code_activation' => $newCode]);
+        $user->update([
+            'code_activation' => $newCode,
+            'code_expires_at' => Carbon::now()->addMinutes(30), // ⏰ expire dans 30 min
+        ]);
 
         Mail::to($user->email)->send(new ActivationMail($user, $newCode));
 
@@ -136,28 +98,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * @group Authentification
-     *
-     * Connexion
-     *
-     * Cette route permet à un utilisateur activé de se connecter et de recevoir un jeton d’accès (token Bearer).
-     *
-     * @bodyParam email string required Adresse email de l’utilisateur. Exemple: alice@example.com
-     * @bodyParam password string required Mot de passe de l’utilisateur. Exemple: secret123
-     *
-     * @response 200 {
-     *  "message": "Connexion réussie",
-     *  "access_token": "1|p6cjhD3t2hA2zP5y8kP6a...",
-     *  "token_type": "Bearer",
-     *  "user": {
-     *      "id": 1,
-     *      "name": "Alice Dupont",
-     *      "email": "alice@example.com",
-     *      "role": "client"
-     *  }
-     * }
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -185,40 +125,11 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * @group Authentification
-     *
-     * Profil utilisateur connecté
-     *
-     * Permet de récupérer les informations de l’utilisateur connecté via le token.
-     *
-     * @authenticated
-     *
-     * @response 200 {
-     *  "id": 1,
-     *  "name": "Alice Dupont",
-     *  "email": "alice@example.com",
-     *  "role": "client"
-     * }
-     */
     public function me(Request $request)
     {
         return response()->json($request->user());
     }
 
-    /**
-     * @group Authentification
-     *
-     * Déconnexion
-     *
-     * Supprime le token d’accès actuel.
-     *
-     * @authenticated
-     *
-     * @response 200 {
-     *  "message": "Déconnexion réussie"
-     * }
-     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
