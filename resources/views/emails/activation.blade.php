@@ -22,7 +22,4 @@ Merci pour votre confiance 💙
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin-top:30px;">
 
-<!-- <small style="color:#6b7280; display:block; text-align:center;">
-Si vous n’avez pas créé de compte sur LifePlanner, vous pouvez ignorer cet email.
-</small> -->
 @endcomponent

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Str; // Ajouté pour générer le token
-use Illuminate\Support\Facades\Mail; // Pour la simulation d'envoi
+use Carbon\Carbon;
+use App\Mail\VerifyNewEmailCodeMail;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -22,162 +24,94 @@ class ProfileController extends Controller
         return response()->json([
             'name' => $user->name,
             'email' => $user->email,
-            // Affiche l'email en attente s'il y en a un
-            'pending_email' => $user->pending_email ?? null,
+            'pending_email' => $user->pending_email,
             'langue' => $user->langue,
             'theme' => $user->theme,
         ]);
     }
 
     /**
-     * 🟢 Mettre à jour les informations du profil
+     * 🟢 Demande de changement d’e-mail — envoie un code de vérification
      */
-    public function update(Request $request)
+    public function requestEmailChange(Request $request)
     {
         $user = Auth::user();
 
-        // Validation des champs
         $request->validate([
-            'name' => 'nullable|string|max:255',
-            // Ancien 'email' renommé en 'new_email'
-            // L'unicité est vérifiée avant de commencer le processus de vérification
-            'new_email' => 'nullable|email|unique:users,email,' . $user->id,
-            'old_password' => 'nullable|string',
-            'new_password' => 'nullable|string|min:6|confirmed',
-            'langue' => 'nullable|in:fr,en,es',
-            'theme' => 'nullable|in:clair,sombre',
+            'new_email' => 'required|email|unique:users,email,' . $user->id,
         ]);
 
-        $message = 'Profil mis à jour avec succès';
-        $verification_link = null;
+        // Générer un code à 6 chiffres
+        $code = rand(100000, 999999);
 
-        // 🟣 Mettre à jour le nom
-        if ($request->filled('name')) {
-            $user->name = $request->name;
-        }
-
-        // 🟣 GESTION DU CHANGEMENT D'EMAIL SÉCURISÉ
-        if ($request->filled('new_email')) {
-            
-            // 1. Stocker le nouvel email dans une colonne temporaire
-            $user->pending_email = $request->new_email;
-            
-            // 2. Créer et stocker un token unique
-            $token = Str::random(60);
-            $user->email_verification_token = $token; 
-            
-            // 3. Simuler l'envoi de l'email de vérification
-            // Le lien réel doit pointer vers votre API avec le token
-            $verification_link = url('/api/profile/verify-email?token=' . $token);
-            
-            // Mail::to($request->new_email)->send(new VerifyNewEmail($token));
-
-            $message = 'Un email de vérification a été envoyé à ' . $request->new_email . '. Veuillez confirmer le changement.';
-        }
-
-        // 🟣 Mettre à jour le mot de passe (avec vérification de l’ancien)
-        if ($request->filled('old_password') || $request->filled('new_password')) {
-            // ... (logique de vérification du mot de passe inchangée)
-            if (!$request->filled('old_password') || !$request->filled('new_password')) {
-                throw ValidationException::withMessages([
-                    'password' => 'Vous devez fournir l’ancien et le nouveau mot de passe.',
-                ]);
-            }
-
-            if (!Hash::check($request->old_password, $user->password)) {
-                throw ValidationException::withMessages([
-                    'old_password' => 'L’ancien mot de passe est incorrect.',
-                ]);
-            }
-            
-            $user->password = Hash::make($request->new_password);
-        }
-
-        // 🟣 Mettre à jour la langue
-        if ($request->filled('langue')) {
-            $user->langue = $request->langue;
-        }
-
-        // 🟣 Mettre à jour le thème
-        if ($request->filled('theme')) {
-            $user->theme = $request->theme;
-        }
-
+        // Sauvegarder dans la base
+        $user->pending_email = $request->new_email;
+        $user->email_verification_code = $code;
+        $user->email_verification_expires_at = Carbon::now()->addMinutes(15);
         $user->save();
 
+        // Envoi du mail
+        Mail::to($request->new_email)->send(new VerifyNewEmailCodeMail($user->name, $code));
+
         return response()->json([
-            'message' => $message,
-            'data' => [
-                'name' => $user->name,
-                'email' => $user->email,
-                'pending_email' => $user->pending_email, // Affichage du nouvel email en attente
-                'langue' => $user->langue,
-                'theme' => $user->theme,
-            ],
-            // Utile pour le débogage/test Postman
-            'debug_link' => $verification_link
+            'message' => 'Un code de vérification a été envoyé à ' . $request->new_email,
         ]);
     }
 
-    // ----------------------------------------------------------------------
-
     /**
-     * 🟣 NOUVELLE MÉTHODE : Confirmer la vérification du nouvel email via un token
-     * La route API (ex: GET /api/profile/verify-email) doit pointer ici.
+     * 🟢 Vérifier le code et valider le changement d’e-mail
      */
-    public function verifyNewEmail(Request $request)
+    public function verifyEmailChange(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
-            'token' => 'required|string',
+            'code' => 'required|digits:6',
         ]);
-        
-        $user = Auth::user(); // Supposons que l'utilisateur est authentifié pour l'appel
-        
-        // 1. Vérifier si le token correspond et si un email est en attente
-        if (!$user || $user->email_verification_token !== $request->token || is_null($user->pending_email)) {
-             return response()->json([
-                 'message' => 'Lien de vérification invalide ou expiré.'
-             ], 400);
+
+        // Vérifier la correspondance du code
+        if (
+            $user->email_verification_code !== $request->code ||
+            !$user->pending_email ||
+            Carbon::now()->greaterThan($user->email_verification_expires_at)
+        ) {
+            throw ValidationException::withMessages([
+                'code' => 'Code invalide ou expiré.',
+            ]);
         }
 
-        // 2. Appliquer le changement d'email
+        // ✅ Appliquer le changement
         $user->email = $user->pending_email;
-        
-        // 3. Nettoyer les champs temporaires
+
+        // Nettoyage
         $user->pending_email = null;
-        $user->email_verification_token = null;
-        
+        $user->email_verification_code = null;
+        $user->email_verification_expires_at = null;
         $user->save();
 
         return response()->json([
-            'message' => 'Votre adresse email a été mise à jour avec succès.',
-            'new_email' => $user->email
+            'message' => 'Votre adresse e-mail a été mise à jour avec succès.',
+            'email' => $user->email,
         ]);
     }
-    
-    // ----------------------------------------------------------------------
-    
+
     /**
-     * 🔴 Supprimer le compte utilisateur connecté avec confirmation
+     * 🔴 Supprimer le compte utilisateur connecté
      */
     public function destroy(Request $request)
     {
-        $user = Auth::user();
-        // ... (Logique inchangée)
         $request->validate([
             'confirmation' => 'required|boolean'
         ]);
 
+        $user = Auth::user();
+
         if ($request->confirmation !== true) {
-            return response()->json([
-                'message' => 'Suppression annulée par l’utilisateur.'
-            ], 400);
+            return response()->json(['message' => 'Suppression annulée.'], 400);
         }
 
         $user->delete();
 
-        return response()->json([
-            'message' => 'Compte supprimé avec succès'
-        ]);
+        return response()->json(['message' => 'Compte supprimé avec succès.']);
     }
 }

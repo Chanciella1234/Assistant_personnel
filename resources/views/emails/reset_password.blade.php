@@ -1,7 +1,7 @@
 @component('mail::message')
 # 🔐 Réinitialisation de votre mot de passe
 
-Bonjour {{ $name }},  
+Bonjour ,  
 
 Vous avez demandé à **réinitialiser votre mot de passe** sur **LifePlanner**.  
 Veuillez utiliser le code ci-dessous pour finaliser la procédure :

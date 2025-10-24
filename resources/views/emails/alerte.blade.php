@@ -27,8 +27,4 @@ Merci pour votre confiance 💙
 **L’équipe LifePlanner**
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin-top:30px;">
-<small style="color:#6b7280; display:block; text-align:center;">
-Vous recevez ce message car vous avez activé les rappels d’activités dans LifePlanner.
-</small>
-<!--  -->
 @endcomponent
