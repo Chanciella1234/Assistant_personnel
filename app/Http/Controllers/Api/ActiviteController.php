@@ -130,24 +130,41 @@ class ActiviteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $activite = Activite::where('user_id', Auth::id())->findOrFail($id);
+        $activite = Activite::findOrFail($id);
 
-        $validated = $request->validate([
-            'titre' => 'required|string|max:255',
+        $request->validate([
+            'titre' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'date_debut_activite' => 'required|date|after:now',
-            'date_fin_activite' => 'required|date|after:date_debut_activite',
-            'priorite' => 'required|in:forte,moyenne,faible',
-            'rappel_personnalise' => 'nullable|integer|min:10|max:10080'
+            'date_debut_activite' => 'sometimes|date',
+            'date_fin_activite' => 'sometimes|date|after:date_debut_activite',
+            'priorite' => 'sometimes|in:forte,moyenne,faible',
+            'statut' => 'sometimes|in:en attente,en cours,pause,terminee',
         ]);
 
-        $activite->update($validated);
+        // 🔹 Si l'utilisateur veut marquer comme terminée :
+        if ($request->filled('statut') && $request->statut === 'terminee') {
+            // l'utilisateur marque manuellement la fin
+            $activite->statut = 'terminee';
+        } else {
+            // sinon on garde le comportement normal (mise à jour auto possible)
+            $activite->fill($request->only([
+                'titre',
+                'description',
+                'date_debut_activite',
+                'date_fin_activite',
+                'priorite',
+                'statut',
+            ]));
+        }
+
+        $activite->save();
 
         return response()->json([
             'message' => 'Activité mise à jour avec succès.',
             'data' => $activite
         ]);
     }
+
 
 
     /**

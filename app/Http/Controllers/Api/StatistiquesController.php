@@ -4,68 +4,149 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activite;
+use App\Models\Tache;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class StatistiquesController extends Controller
 {
     /**
-     * 📊 Statistiques globales des activités de l'utilisateur
+     * 📊 Tableau de bord des statistiques utilisateur (Activités + Tâches)
      */
     public function index()
     {
         $user = Auth::user();
+        $now = Carbon::now();
 
+        /**
+         * 1️⃣ STATISTIQUES GÉNÉRALES
+         */
         $totalActivites = Activite::where('user_id', $user->id)->count();
-        $totalTerminees = Activite::where('user_id', $user->id)
-            ->where('statut', 'terminee')
-            ->count();
+        $totalTaches = Tache::whereHas('activite', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->count();
 
-        // 📈 Taux de réussite
-        $taux = $totalActivites > 0 ? round(($totalTerminees / $totalActivites) * 100, 2) : 0;
+        $termineesActivites = Activite::where('user_id', $user->id)->where('statut', 'terminee')->count();
+        $termineesTaches = Tache::whereHas('activite', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->where('statut', 'terminee')->count();
 
-        // 📊 Répartition par priorité
+        // Taux de réussite global
+        $tauxReussite = $totalActivites > 0
+            ? round(($termineesActivites / $totalActivites) * 100, 2)
+            : 0;
+
+
+        /**
+         * 2️⃣ RÉPARTITION PAR PRIORITÉ
+         */
         $parPriorite = Activite::where('user_id', $user->id)
-            ->where('statut', 'terminee')
             ->selectRaw('priorite, COUNT(*) as total')
             ->groupBy('priorite')
             ->get();
 
-        // 📆 Répartition par période
-        $now = Carbon::now();
-        $jour = Activite::where('user_id', $user->id)
+
+        /**
+         * 4️⃣ RÉPARTITION PAR STATUT (activités et tâches)
+         */
+        $parStatutActivites = Activite::where('user_id', $user->id)
+            ->selectRaw('statut, COUNT(*) as total')
+            ->groupBy('statut')
+            ->get();
+
+        $parStatutTaches = Tache::whereHas('activite', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+            ->selectRaw('statut, COUNT(*) as total')
+            ->groupBy('statut')
+            ->get();
+
+
+        /**
+         * 5️⃣ ÉVOLUTION (progression semaine / mois)
+         */
+        // Activités terminées par mois
+        $evolutionActivites = Activite::where('user_id', $user->id)
             ->where('statut', 'terminee')
-            ->whereDate('date_fin_activite', $now->toDateString())
+            ->select(
+                DB::raw('MONTH(date_fin_activite) as mois'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('mois')
+            ->get();
+
+        // Tâches terminées par mois
+        $evolutionTaches = Tache::whereHas('activite', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+            ->where('statut', 'terminee')
+            ->select(
+                DB::raw('MONTH(date_fin_tache) as mois'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('mois')
+            ->get();
+
+
+        /**
+         * 6️⃣ COMPARAISON — progression par rapport au mois précédent
+         */
+        $moisActuel = $now->month;
+        $moisPrecedent = $now->copy()->subMonth()->month;
+
+        $actuelles = Activite::where('user_id', $user->id)
+            ->whereMonth('date_fin_activite', $moisActuel)
+            ->where('statut', 'terminee')
             ->count();
 
-        $semaine = Activite::where('user_id', $user->id)
+        $precedentes = Activite::where('user_id', $user->id)
+            ->whereMonth('date_fin_activite', $moisPrecedent)
             ->where('statut', 'terminee')
-            ->whereBetween('date_fin_activite', [$now->startOfWeek(), $now->endOfWeek()])
             ->count();
 
-        $mois = Activite::where('user_id', $user->id)
-            ->where('statut', 'terminee')
-            ->whereMonth('date_fin_activite', $now->month)
-            ->whereYear('date_fin_activite', $now->year)
-            ->count();
+        $variation = $precedentes > 0
+            ? round((($actuelles - $precedentes) / $precedentes) * 100, 2)
+            : 100;
 
-        $annee = Activite::where('user_id', $user->id)
-            ->where('statut', 'terminee')
-            ->whereYear('date_fin_activite', $now->year)
-            ->count();
 
+        /**
+         * 7️⃣ TAUX DE SATISFACTION (simulé ici)
+         * 👉 On suppose que le taux est basé sur le ratio d’activités terminées
+         * par rapport au total (en attendant les "avis" dans le futur)
+         */
+        $tauxSatisfaction = $tauxReussite >= 80 ? 'Excellent' :
+            ($tauxReussite >= 60 ? 'Bon' :
+                ($tauxReussite >= 40 ? 'Moyen' : 'Faible'));
+
+
+        /**
+         * ✅ RÉPONSE JSON FINALE
+         */
         return response()->json([
-            'message' => 'Statistiques des activités récupérées avec succès.',
+            'message' => 'Statistiques complètes récupérées avec succès.',
             'data' => [
-                'total_activites' => $totalActivites,
-                'total_terminees' => $totalTerminees,
-                'taux_reussite' => $taux . '%',
+                'global' => [
+                    'total_activites' => $totalActivites,
+                    'total_taches' => $totalTaches,
+                    'activites_terminees' => $termineesActivites,
+                    'taches_terminees' => $termineesTaches,
+                    'taux_reussite' => $tauxReussite . '%',
+                    'taux_satisfaction' => $tauxSatisfaction,
+                ],
                 'par_priorite' => $parPriorite,
-                'par_periode' => [
-                    'jour' => $jour,
-                    'semaine' => $semaine,
-                    'mois' => $mois,
-                    'annee' => $annee,
+                'par_statut' => [
+                    'activites' => $parStatutActivites,
+                    'taches' => $parStatutTaches,
+                ],
+                'evolution' => [
+                    'activites' => $evolutionActivites,
+                    'taches' => $evolutionTaches,
+                ],
+                'comparaison' => [
+                    'mois_actuel' => $actuelles,
+                    'mois_precedent' => $precedentes,
+                    'variation_pourcentage' => $variation . '%',
                 ],
             ],
         ]);

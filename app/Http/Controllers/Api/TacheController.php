@@ -57,24 +57,45 @@ class TacheController extends Controller
      */
     public function update(Request $request, $activite_id, $tache_id)
     {
-        $activite = Activite::where('user_id', Auth::id())->findOrFail($activite_id);
-        $tache = $activite->taches()->findOrFail($tache_id);
+        $user = Auth::user();
 
-        $validated = $request->validate([
+        // Vérifie que la tâche appartient bien à l'utilisateur
+        $tache = Tache::where('id', $tache_id)
+            ->whereHas('activite', function ($q) use ($user, $activite_id) {
+                $q->where('user_id', $user->id)
+                  ->where('id', $activite_id);
+            })->firstOrFail();
+
+        $request->validate([
             'titre' => 'sometimes|string|max:255',
             'date_debut_tache' => 'sometimes|date',
             'date_fin_tache' => 'sometimes|date|after:date_debut_tache',
             'statut' => 'sometimes|in:en attente,en cours,pause,terminee',
         ]);
 
-        $tache->update($validated);
-        $tache->mettreAJourStatut();
+        // 🟣 Si l'utilisateur veut marquer la tâche comme terminée manuellement
+        if ($request->filled('statut') && $request->statut === 'terminee') {
+            $tache->statut = 'terminee';
+        } 
+        // 🟡 Sinon on met à jour les autres champs
+        else {
+            $tache->fill($request->only([
+                'titre',
+                'date_debut_tache',
+                'date_fin_tache',
+                'statut',
+            ]));
+        }
+
+        $tache->save();
 
         return response()->json([
             'message' => 'Tâche mise à jour avec succès.',
-            'data' => $tache,
+            'data' => $tache
         ]);
     }
+}
+
 
     /**
      * 🗑️ Supprimer une tâche

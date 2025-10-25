@@ -31,25 +31,43 @@ class Tache extends Model
         return $this->hasMany(Tache::class);
     }
 
+    public function activite()
+    {
+        return $this->belongsTo(Activite::class, 'activite_id');
+    }
+
+
 
     /**
-     * 🔄 Mise à jour automatique du statut
-     */
-    public function mettreAJourStatut()
-    {
-        $now = Carbon::now();
+ * 🔄 Mise à jour automatique du statut
+ */
+public function mettreAJourStatut()
+{
+    $now = Carbon::now();
 
-        if ($this->statut === 'terminee') return;
-        if ($this->statut === 'pause') return;
-
-        if ($now->lt($this->date_debut_tache)) {
-            $this->statut = 'en attente';
-        } elseif ($now->between($this->date_debut_tache, $this->date_fin_tache)) {
-            $this->statut = 'en cours';
-        } elseif ($now->gt($this->date_fin_tache)) {
-            $this->statut = 'terminee';
-        }
-
-        $this->save();
+    // 🔒 Ne rien faire si l'activité est terminée ou en pause
+    if ($this->statut === 'terminee' || $this->statut === 'pause') {
+        return;
     }
+
+    // ⏳ Avant le début → "en attente"
+    if ($now->lt($this->date_debut_tache)) {
+        $this->statut = 'en attente';
+    }
+
+    // 🚀 Entre le début et la fin → "en cours"
+    elseif ($now->between($this->date_debut_tache, $this->date_fin_tache)) {
+        $this->statut = 'en cours';
+    }
+
+    // 🕒 Après la fin → on ne met PAS automatiquement "terminee"
+    // l'utilisateur doit le faire manuellement
+    // (donc on laisse le statut actuel)
+    else {
+        return;
+    }
+
+    $this->save();
+}
+
 }

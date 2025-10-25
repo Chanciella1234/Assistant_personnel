@@ -60,20 +60,28 @@ class Activite extends Model
     {
         $now = Carbon::now();
 
-        if ($this->statut === 'terminee') return; // Ne pas toucher si terminée manuellement
+        // 🔒 Ne rien changer si déjà en pause ou terminée
+        if ($this->statut === 'terminee' || $this->statut === 'pause') {
+            return;
+        }
 
+        // ⏳ Avant la date de début → "en attente"
         if ($now->lt($this->date_debut_activite)) {
             $this->statut = 'en attente';
-        } elseif ($now->between($this->date_debut_activite, $this->date_fin_activite)) {
-            if ($this->statut !== 'pause') {
-                $this->statut = 'en cours';
-            }
-        } elseif ($now->gt($this->date_fin_activite)) {
-            if ($this->statut !== 'terminee') {
-                $this->statut = 'terminee';
-            }
+        }
+
+        // 🚀 Entre début et fin → "en cours"
+        elseif ($now->between($this->date_debut_activite, $this->date_fin_activite)) {
+            $this->statut = 'en cours';
+        }
+
+        // 🕒 Après la date de fin → pas automatique
+        // (l’utilisateur devra la marquer manuellement comme "terminée")
+        else {
+            return;
         }
 
         $this->save();
     }
+
 }
