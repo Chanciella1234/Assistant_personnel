@@ -94,6 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //User Profile routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile/update', [ProfileController::class, 'updateProfile']);
+
     
     // 🔹 Changement d’e-mail avec code OTP
     Route::post('/profile/request-email-change', [ProfileController::class, 'requestEmailChange']);

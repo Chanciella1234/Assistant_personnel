@@ -10,17 +10,17 @@
     ],
     "info": {
         "name": "Laravel API Documentation",
-        "_postman_id": "08b64af0-741b-4770-a15f-c350cc7e1144",
+        "_postman_id": "1194e4ac-c02d-468e-9212-d20b2158afa6",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
     "item": [
         {
-            "name": "Authentification",
+            "name": "Endpoints",
             "description": "",
             "item": [
                 {
-                    "name": "Inscription (Envoi du code d\u2019activation)\n\nCette route permet \u00e0 un utilisateur de s\u2019inscrire.  \nUn code d\u2019activation de 6 chiffres sera envoy\u00e9 par email avant l\u2019activation du compte.",
+                    "name": "POST api\/auth\/register",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -41,24 +41,17 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"consequatur\",\"email\":\"qkunze@example.com\",\"password\":\"O[2UZ5ij-e\\\/dl4m{o,\",\"password_confirmation\":\"consequatur\"}"
+                            "raw": "{\"name\":\"vmqeopfuudtdsufvyvddq\",\"email\":\"kunde.eloisa@example.com\",\"password\":\"4[*UyPJ\\\"}6\"}"
                         },
                         "description": "",
                         "auth": {
                             "type": "noauth"
                         }
                     },
-                    "response": [
-                        {
-                            "header": [],
-                            "code": 201,
-                            "body": "{\n \"message\": \"Compte cr\u00e9\u00e9. V\u00e9rifiez votre e-mail pour le code d\u2019activation.\",\n \"user\": {\n     \"id\": 1,\n     \"email\": \"alice@example.com\"\n }\n}",
-                            "name": ""
-                        }
-                    ]
+                    "response": []
                 },
                 {
-                    "name": "V\u00e9rification du code d\u2019activation\n\nCette route permet \u00e0 l\u2019utilisateur de valider le code re\u00e7u par e-mail.",
+                    "name": "POST api\/auth\/verify-code",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -79,24 +72,17 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"qkunze@example.com\",\"code_activation\":\"consequatur\"}"
+                            "raw": "{\"email\":\"qkunze@example.com\",\"code_activation\":\"810798\"}"
                         },
                         "description": "",
                         "auth": {
                             "type": "noauth"
                         }
                     },
-                    "response": [
-                        {
-                            "header": [],
-                            "code": 200,
-                            "body": "{\n \"message\": \"Compte activ\u00e9 avec succ\u00e8s. Vous pouvez maintenant vous connecter.\"\n}",
-                            "name": ""
-                        }
-                    ]
+                    "response": []
                 },
                 {
-                    "name": "Renvoyer un nouveau code d\u2019activation\n\nPermet \u00e0 un utilisateur non v\u00e9rifi\u00e9 de recevoir un nouveau code d\u2019activation.",
+                    "name": "POST api\/auth\/resend-code",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -124,17 +110,10 @@
                             "type": "noauth"
                         }
                     },
-                    "response": [
-                        {
-                            "header": [],
-                            "code": 200,
-                            "body": "{\n \"message\": \"Nouveau code envoy\u00e9 \u00e0 votre adresse e-mail.\",\n \"email\": \"alice@example.com\"\n}",
-                            "name": ""
-                        }
-                    ]
+                    "response": []
                 },
                 {
-                    "name": "Connexion\n\nCette route permet \u00e0 un utilisateur activ\u00e9 de se connecter et de recevoir un jeton d\u2019acc\u00e8s (token Bearer).",
+                    "name": "POST api\/auth\/login",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -155,30 +134,116 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"qkunze@example.com\",\"password\":\"O[2UZ5ij-e\\\/dl4m{o,\"}"
+                            "raw": "{\"email\":\"qkunze@example.com\",\"password\":\"consequatur\"}"
                         },
                         "description": "",
                         "auth": {
                             "type": "noauth"
                         }
                     },
-                    "response": [
-                        {
-                            "header": [],
-                            "code": 200,
-                            "body": "{\n \"message\": \"Connexion r\u00e9ussie\",\n \"access_token\": \"1|p6cjhD3t2hA2zP5y8kP6a...\",\n \"token_type\": \"Bearer\",\n \"user\": {\n     \"id\": 1,\n     \"name\": \"Alice Dupont\",\n     \"email\": \"alice@example.com\",\n     \"role\": \"client\"\n }\n}",
-                            "name": ""
-                        }
-                    ]
+                    "response": []
                 },
                 {
-                    "name": "Profil utilisateur connect\u00e9\n\nPermet de r\u00e9cup\u00e9rer les informations de l\u2019utilisateur connect\u00e9 via le token.",
+                    "name": "POST api\/auth\/forgot-password",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/me",
+                            "path": "api\/auth\/forgot-password",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/me"
+                            "raw": "{{baseUrl}}\/api\/auth\/forgot-password"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/auth\/verify-reset-code",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/verify-reset-code",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/verify-reset-code"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\",\"reset_code\":\"810798\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/auth\/reset-password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/reset-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/reset-password"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"qkunze@example.com\",\"reset_code\":\"810798\",\"new_password\":\"mqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjury\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Lister les activit\u00e9s (avec recherche + filtrage)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites"
                         },
                         "method": "GET",
                         "header": [
@@ -192,25 +257,41 @@
                             }
                         ],
                         "body": null,
-                        "description": ""
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
                     },
                     "response": [
                         {
-                            "header": [],
-                            "code": 200,
-                            "body": "{\n \"id\": 1,\n \"name\": \"Alice Dupont\",\n \"email\": \"alice@example.com\",\n \"role\": \"client\"\n}",
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
                             "name": ""
                         }
                     ]
                 },
                 {
-                    "name": "D\u00e9connexion\n\nSupprime le token d\u2019acc\u00e8s actuel.",
+                    "name": "\ud83d\udfe2 Cr\u00e9er une activit\u00e9",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/logout",
+                            "path": "api\/activites",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/logout"
+                            "raw": "{{baseUrl}}\/api\/activites"
                         },
                         "method": "POST",
                         "header": [
@@ -223,17 +304,1142 @@
                                 "value": "application\/json"
                             }
                         ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"titre\":\"vmqeopfuudtdsufvyvddq\",\"description\":\"Dolores dolorum amet iste laborum eius est dolor.\",\"date_debut_activite\":\"2106-11-23\",\"date_fin_activite\":\"2106-11-23\",\"priorite\":\"moyenne\",\"rappel_personnalise\":13}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Afficher une activit\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
                         "body": null,
-                        "description": ""
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
                     },
                     "response": [
                         {
-                            "header": [],
-                            "code": 200,
-                            "body": "{\n \"message\": \"D\u00e9connexion r\u00e9ussie\"\n}",
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "\ud83d\udfe2 Mettre \u00e0 jour une activit\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"titre\":\"vmqeopfuudtdsufvyvddq\",\"description\":\"Dolores dolorum amet iste laborum eius est dolor.\",\"date_debut_activite\":\"2106-11-23\",\"date_fin_activite\":\"2106-11-23\",\"priorite\":\"moyenne\",\"rappel_personnalise\":13}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Supprimer une activit\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe1 Mettre une activit\u00e9 en pause",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id\/pause",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id\/pause",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Reprendre une activit\u00e9 mise en pause",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id\/reprendre",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id\/reprendre",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udccb Lister les t\u00e2ches d'une activit\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udfe2 Cr\u00e9er une t\u00e2che pour une activit\u00e9 donn\u00e9e",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"titre\":\"vmqeopfuudtdsufvyvddq\",\"date_debut_tache\":\"2025-10-25T00:57:59\",\"date_fin_tache\":\"2106-11-23\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe1 Mettre \u00e0 jour une t\u00e2che",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches\/:tache_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches\/:tache_id",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                },
+                                {
+                                    "id": "tache_id",
+                                    "key": "tache_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the tache."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"titre\":\"vmqeopfuudtdsufvyvddq\",\"date_debut_tache\":\"2025-10-25T00:57:59\",\"date_fin_tache\":\"2106-11-23\",\"statut\":\"terminee\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\uddd1\ufe0f Supprimer une t\u00e2che",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches\/:tache_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches\/:tache_id",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                },
+                                {
+                                    "id": "tache_id",
+                                    "key": "tache_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the tache."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe1 Mettre une t\u00e2che en pause",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches\/:tache_id\/pause",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches\/:tache_id\/pause",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                },
+                                {
+                                    "id": "tache_id",
+                                    "key": "tache_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the tache."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Reprendre une t\u00e2che mise en pause",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:activite_id\/taches\/:tache_id\/reprendre",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:activite_id\/taches\/:tache_id\/reprendre",
+                            "variable": [
+                                {
+                                    "id": "activite_id",
+                                    "key": "activite_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                },
+                                {
+                                    "id": "tache_id",
+                                    "key": "tache_id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the tache."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udcca Statistiques globales des activit\u00e9s de l'utilisateur",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/statistiques\/activites",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/statistiques\/activites"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udccb Liste des commentaires de l\u2019utilisateur connect\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/commentaires",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/commentaires"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udfe2 Cr\u00e9er un commentaire",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/commentaires",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/commentaires"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"contenu\":\"vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe1 Modifier un commentaire (uniquement par son auteur)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/commentaires\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/commentaires\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the commentaire."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"contenu\":\"vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\uddd1\ufe0f Supprimer un commentaire (par son auteur)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/commentaires\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/commentaires\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the commentaire."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udc65 Liste de tous les utilisateurs",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/utilisateurs",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/utilisateurs"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udd0d D\u00e9tails d\u2019un utilisateur : ses activit\u00e9s, t\u00e2ches et commentaires",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/utilisateurs\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/utilisateurs\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the utilisateur."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udcca Affiche les statistiques globales (pour l'administrateur)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/statistiques",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/statistiques"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udd0d Voir le rappel d\u00e9fini pour une activit\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id\/rappel",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id\/rappel",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udfe2 D\u00e9finir ou modifier un rappel personnalis\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id\/rappel",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id\/rappel",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"rappel_personnalise\":21}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\uddd1\ufe0f Supprimer le rappel personnalis\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/activites\/:id\/rappel",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/activites\/:id\/rappel",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "consequatur",
+                                    "description": "The ID of the activite."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Afficher le profil utilisateur connect\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\ud83d\udfe2 Mettre \u00e0 jour le nom et\/ou le mot de passe",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile\/update",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile\/update"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"vmqeopfuudtdsufvyvddq\",\"old_password\":\"consequatur\",\"new_password\":\"mqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjury\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 Demande de changement d\u2019e-mail \u2014 envoie un code de v\u00e9rification",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile\/request-email-change",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile\/request-email-change"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udfe2 V\u00e9rifier le code et valider le changement d\u2019e-mail",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile\/verify-email-change",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile\/verify-email-change"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"code\":\"810798\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\ud83d\udd34 Supprimer le compte utilisateur connect\u00e9",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile"
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"confirmation\":true}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
                 }
             ]
         }

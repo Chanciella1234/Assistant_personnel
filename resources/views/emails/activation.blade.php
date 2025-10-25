@@ -12,7 +12,7 @@ Avant de commencer à planifier vos activités, veuillez **confirmer votre compt
 </h2>
 @endcomponent
 
-👉 **Ce code est valable pendant 15 minutes.**  
+👉 **Ce code est valable pendant 30 minutes.**  
 Saisissez-le dans l’application pour finaliser votre inscription.
 
 

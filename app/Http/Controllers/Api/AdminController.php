@@ -23,15 +23,21 @@ class AdminController extends Controller
      */
     public function index()
     {
+        // Récupère l'utilisateur actuellement authentifié (non nécessaire pour le filtre, mais conservé)
         $admin = auth()->user();
         $this->ensureAdmin($admin);
 
-        $utilisateurs = User::select('id', 'name', 'email', 'langue', 'theme', 'created_at')
+        // 1. Définir le rôle à exclure (par exemple, 'admin')
+        $role_a_exclure = 'admin';
+
+        // 2. Modifier la requête pour exclure les utilisateurs avec ce rôle
+        $utilisateurs = User::select('id', 'name', 'email', 'created_at')
+            ->where('role', '!=', $role_a_exclure) // <--- AJOUT DE LA CONDITION D'EXCLUSION
             ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json([
-            'message' => 'Liste des utilisateurs récupérée avec succès.',
+            'message' => 'Liste des utilisateurs récupérée avec succès (excluant les admins).',
             'data' => $utilisateurs,
         ]);
     }
@@ -56,7 +62,7 @@ class AdminController extends Controller
                 $query->select('id', 'user_id', 'contenu', 'created_at');
             },
         ])
-            ->select('id', 'name', 'email', 'langue', 'theme', 'created_at')
+            ->select('id', 'name', 'email', 'created_at')
             ->findOrFail($id);
 
         return response()->json([

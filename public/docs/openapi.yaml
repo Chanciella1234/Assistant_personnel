@@ -8,42 +8,18 @@ servers:
     url: 'http://localhost'
 tags:
   -
-    name: Authentification
+    name: Endpoints
     description: ''
 paths:
   /api/auth/register:
     post:
-      summary: "Inscription (Envoi du code d’activation)\n\nCette route permet à un utilisateur de s’inscrire.  \nUn code d’activation de 6 chiffres sera envoyé par email avant l’activation du compte."
-      operationId: inscriptionEnvoiDuCodeDactivationCetteRoutePermetUnUtilisateurDeSinscrireUnCodeDactivationDe6ChiffresSeraEnvoyParEmailAvantLactivationDuCompte
+      summary: ''
+      operationId: postApiAuthRegister
       description: ''
       parameters: []
-      responses:
-        201:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: 'Compte créé. Vérifiez votre e-mail pour le code d’activation.'
-                  user:
-                    id: 1
-                    email: alice@example.com
-                properties:
-                  message:
-                    type: string
-                    example: 'Compte créé. Vérifiez votre e-mail pour le code d’activation.'
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      email:
-                        type: string
-                        example: alice@example.com
+      responses: {  }
       tags:
-        - Authentification
+        - Endpoints
       requestBody:
         required: true
         content:
@@ -53,51 +29,33 @@ paths:
               properties:
                 name:
                   type: string
-                  description: 'Nom complet de l’utilisateur. Exemple: Alice Dupont'
-                  example: consequatur
+                  description: 'Must not be greater than 100 characters.'
+                  example: vmqeopfuudtdsufvyvddq
                   nullable: false
                 email:
                   type: string
-                  description: 'Adresse email valide et unique. Exemple: alice@example.com'
-                  example: qkunze@example.com
+                  description: 'Must be a valid email address.'
+                  example: kunde.eloisa@example.com
                   nullable: false
                 password:
                   type: string
-                  description: 'Mot de passe d’au moins 6 caractères. Exemple: secret123'
-                  example: 'O[2UZ5ij-e/dl4m{o,'
-                  nullable: false
-                password_confirmation:
-                  type: string
-                  description: 'Confirmation du mot de passe. Exemple: secret123'
-                  example: consequatur
+                  description: 'Must be at least 6 characters.'
+                  example: '4[*UyPJ"}6'
                   nullable: false
               required:
                 - name
                 - email
                 - password
-                - password_confirmation
       security: []
   /api/auth/verify-code:
     post:
-      summary: "Vérification du code d’activation\n\nCette route permet à l’utilisateur de valider le code reçu par e-mail."
-      operationId: vrificationDuCodeDactivationCetteRoutePermetLutilisateurDeValiderLeCodeReuParEMail
+      summary: ''
+      operationId: postApiAuthVerifyCode
       description: ''
       parameters: []
-      responses:
-        200:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: 'Compte activé avec succès. Vous pouvez maintenant vous connecter.'
-                properties:
-                  message:
-                    type: string
-                    example: 'Compte activé avec succès. Vous pouvez maintenant vous connecter.'
+      responses: {  }
       tags:
-        - Authentification
+        - Endpoints
       requestBody:
         required: true
         content:
@@ -107,13 +65,13 @@ paths:
               properties:
                 email:
                   type: string
-                  description: 'Adresse email utilisée lors de l’inscription. Exemple: alice@example.com'
+                  description: 'Must be a valid email address. The <code>email</code> of an existing record in the users table.'
                   example: qkunze@example.com
                   nullable: false
                 code_activation:
                   type: string
-                  description: 'Code à 6 chiffres reçu par e-mail. Exemple: 123456'
-                  example: consequatur
+                  description: 'Must be 6 digits.'
+                  example: '810798'
                   nullable: false
               required:
                 - email
@@ -121,29 +79,13 @@ paths:
       security: []
   /api/auth/resend-code:
     post:
-      summary: "Renvoyer un nouveau code d’activation\n\nPermet à un utilisateur non vérifié de recevoir un nouveau code d’activation."
-      operationId: renvoyerUnNouveauCodeDactivationPermetUnUtilisateurNonVrifiDeRecevoirUnNouveauCodeDactivation
+      summary: ''
+      operationId: postApiAuthResendCode
       description: ''
       parameters: []
-      responses:
-        200:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: 'Nouveau code envoyé à votre adresse e-mail.'
-                  email: alice@example.com
-                properties:
-                  message:
-                    type: string
-                    example: 'Nouveau code envoyé à votre adresse e-mail.'
-                  email:
-                    type: string
-                    example: alice@example.com
+      responses: {  }
       tags:
-        - Authentification
+        - Endpoints
       requestBody:
         required: true
         content:
@@ -153,7 +95,7 @@ paths:
               properties:
                 email:
                   type: string
-                  description: 'Adresse email de l’utilisateur. Exemple: alice@example.com'
+                  description: 'Must be a valid email address. The <code>email</code> of an existing record in the users table.'
                   example: qkunze@example.com
                   nullable: false
               required:
@@ -161,53 +103,13 @@ paths:
       security: []
   /api/auth/login:
     post:
-      summary: "Connexion\n\nCette route permet à un utilisateur activé de se connecter et de recevoir un jeton d’accès (token Bearer)."
-      operationId: connexionCetteRoutePermetUnUtilisateurActivDeSeConnecterEtDeRecevoirUnJetonDaccstokenBearer
+      summary: ''
+      operationId: postApiAuthLogin
       description: ''
       parameters: []
-      responses:
-        200:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: 'Connexion réussie'
-                  access_token: 1|p6cjhD3t2hA2zP5y8kP6a...
-                  token_type: Bearer
-                  user:
-                    id: 1
-                    name: 'Alice Dupont'
-                    email: alice@example.com
-                    role: client
-                properties:
-                  message:
-                    type: string
-                    example: 'Connexion réussie'
-                  access_token:
-                    type: string
-                    example: 1|p6cjhD3t2hA2zP5y8kP6a...
-                  token_type:
-                    type: string
-                    example: Bearer
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: 'Alice Dupont'
-                      email:
-                        type: string
-                        example: alice@example.com
-                      role:
-                        type: string
-                        example: client
+      responses: {  }
       tags:
-        - Authentification
+        - Endpoints
       requestBody:
         required: true
         content:
@@ -217,69 +119,873 @@ paths:
               properties:
                 email:
                   type: string
-                  description: 'Adresse email de l’utilisateur. Exemple: alice@example.com'
+                  description: 'Must be a valid email address.'
                   example: qkunze@example.com
                   nullable: false
                 password:
                   type: string
-                  description: 'Mot de passe de l’utilisateur. Exemple: secret123'
-                  example: 'O[2UZ5ij-e/dl4m{o,'
+                  description: ''
+                  example: consequatur
                   nullable: false
               required:
                 - email
                 - password
       security: []
-  /api/me:
-    get:
-      summary: "Profil utilisateur connecté\n\nPermet de récupérer les informations de l’utilisateur connecté via le token."
-      operationId: profilUtilisateurConnectPermetDeRcuprerLesInformationsDeLutilisateurConnectViaLeToken
-      description: ''
-      parameters: []
-      responses:
-        200:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  id: 1
-                  name: 'Alice Dupont'
-                  email: alice@example.com
-                  role: client
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  name:
-                    type: string
-                    example: 'Alice Dupont'
-                  email:
-                    type: string
-                    example: alice@example.com
-                  role:
-                    type: string
-                    example: client
-      tags:
-        - Authentification
-  /api/logout:
+  /api/auth/forgot-password:
     post:
-      summary: "Déconnexion\n\nSupprime le token d’accès actuel."
-      operationId: dconnexionSupprimeLeTokenDaccsActuel
+      summary: ''
+      operationId: postApiAuthForgotPassword
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: qkunze@example.com
+                  nullable: false
+              required:
+                - email
+      security: []
+  /api/auth/verify-reset-code:
+    post:
+      summary: ''
+      operationId: postApiAuthVerifyResetCode
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: qkunze@example.com
+                  nullable: false
+                reset_code:
+                  type: string
+                  description: 'Must be 6 digits.'
+                  example: '810798'
+                  nullable: false
+              required:
+                - email
+                - reset_code
+      security: []
+  /api/auth/reset-password:
+    post:
+      summary: ''
+      operationId: postApiAuthResetPassword
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: qkunze@example.com
+                  nullable: false
+                reset_code:
+                  type: string
+                  description: 'Must be 6 digits.'
+                  example: '810798'
+                  nullable: false
+                new_password:
+                  type: string
+                  description: 'Must be at least 6 characters.'
+                  example: mqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjury
+                  nullable: false
+              required:
+                - email
+                - reset_code
+                - new_password
+      security: []
+  /api/activites:
+    get:
+      summary: '🟢 Lister les activités (avec recherche + filtrage)'
+      operationId: ListerLesActivitsavecRecherche+Filtrage
       description: ''
       parameters: []
       responses:
-        200:
+        401:
           description: ''
           content:
             application/json:
               schema:
                 type: object
                 example:
-                  message: 'Déconnexion réussie'
+                  message: Unauthenticated.
                 properties:
                   message:
                     type: string
-                    example: 'Déconnexion réussie'
+                    example: Unauthenticated.
       tags:
-        - Authentification
+        - Endpoints
+      security: []
+    post:
+      summary: '🟢 Créer une activité'
+      operationId: CrerUneActivit
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: vmqeopfuudtdsufvyvddq
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Dolores dolorum amet iste laborum eius est dolor.'
+                  nullable: true
+                date_debut_activite:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>now</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+                date_fin_activite:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>date_debut_activite</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+                priorite:
+                  type: string
+                  description: ''
+                  example: moyenne
+                  nullable: false
+                  enum:
+                    - forte
+                    - moyenne
+                    - faible
+                rappel_personnalise:
+                  type: integer
+                  description: 'Must be at least 10. Must not be greater than 10080.'
+                  example: 13
+                  nullable: true
+              required:
+                - titre
+                - date_debut_activite
+                - date_fin_activite
+                - priorite
+      security: []
+  '/api/activites/{id}':
+    get:
+      summary: '🟢 Afficher une activité'
+      operationId: AfficherUneActivit
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: '🟢 Mettre à jour une activité'
+      operationId: MettreJourUneActivit
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: vmqeopfuudtdsufvyvddq
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Dolores dolorum amet iste laborum eius est dolor.'
+                  nullable: true
+                date_debut_activite:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>now</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+                date_fin_activite:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>date_debut_activite</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+                priorite:
+                  type: string
+                  description: ''
+                  example: moyenne
+                  nullable: false
+                  enum:
+                    - forte
+                    - moyenne
+                    - faible
+                rappel_personnalise:
+                  type: integer
+                  description: 'Must be at least 10. Must not be greater than 10080.'
+                  example: 13
+                  nullable: true
+              required:
+                - titre
+                - date_debut_activite
+                - date_fin_activite
+                - priorite
+      security: []
+    delete:
+      summary: '🟢 Supprimer une activité'
+      operationId: SupprimerUneActivit
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{id}/pause':
+    put:
+      summary: '🟡 Mettre une activité en pause'
+      operationId: MettreUneActivitEnPause
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{id}/reprendre':
+    put:
+      summary: '🟢 Reprendre une activité mise en pause'
+      operationId: ReprendreUneActivitMiseEnPause
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{activite_id}/taches':
+    get:
+      summary: "📋 Lister les tâches d'une activité"
+      operationId: ListerLesTchesDuneActivit
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: '🟢 Créer une tâche pour une activité donnée'
+      operationId: CrerUneTchePourUneActivitDonne
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: vmqeopfuudtdsufvyvddq
+                  nullable: false
+                date_debut_tache:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-10-25T00:57:59'
+                  nullable: false
+                date_fin_tache:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>date_debut_tache</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+              required:
+                - titre
+                - date_debut_tache
+                - date_fin_tache
+      security: []
+    parameters:
+      -
+        in: path
+        name: activite_id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{activite_id}/taches/{tache_id}':
+    put:
+      summary: '🟡 Mettre à jour une tâche'
+      operationId: MettreJourUneTche
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: vmqeopfuudtdsufvyvddq
+                  nullable: false
+                date_debut_tache:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-10-25T00:57:59'
+                  nullable: false
+                date_fin_tache:
+                  type: string
+                  description: 'Must be a valid date. Must be a date after <code>date_debut_tache</code>.'
+                  example: '2106-11-23'
+                  nullable: false
+                statut:
+                  type: string
+                  description: ''
+                  example: terminee
+                  nullable: false
+                  enum:
+                    - 'en attente'
+                    - 'en cours'
+                    - pause
+                    - terminee
+      security: []
+    delete:
+      summary: '🗑️ Supprimer une tâche'
+      operationId: SupprimerUneTche
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: activite_id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: tache_id
+        description: 'The ID of the tache.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{activite_id}/taches/{tache_id}/pause':
+    put:
+      summary: '🟡 Mettre une tâche en pause'
+      operationId: MettreUneTcheEnPause
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: activite_id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: tache_id
+        description: 'The ID of the tache.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/activites/{activite_id}/taches/{tache_id}/reprendre':
+    put:
+      summary: '🟢 Reprendre une tâche mise en pause'
+      operationId: ReprendreUneTcheMiseEnPause
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: activite_id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: tache_id
+        description: 'The ID of the tache.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  /api/statistiques/activites:
+    get:
+      summary: "📊 Statistiques globales des activités de l'utilisateur"
+      operationId: StatistiquesGlobalesDesActivitsDeLutilisateur
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/commentaires:
+    get:
+      summary: '📋 Liste des commentaires de l’utilisateur connecté'
+      operationId: ListeDesCommentairesDeLutilisateurConnect
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: '🟢 Créer un commentaire'
+      operationId: CrerUnCommentaire
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contenu:
+                  type: string
+                  description: 'Must be at least 3 characters.'
+                  example: vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur
+                  nullable: false
+              required:
+                - contenu
+      security: []
+  '/api/commentaires/{id}':
+    put:
+      summary: '🟡 Modifier un commentaire (uniquement par son auteur)'
+      operationId: ModifierUnCommentaireuniquementParSonAuteur
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contenu:
+                  type: string
+                  description: 'Must be at least 3 characters.'
+                  example: vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur
+                  nullable: false
+              required:
+                - contenu
+      security: []
+    delete:
+      summary: '🗑️ Supprimer un commentaire (par son auteur)'
+      operationId: SupprimerUnCommentaireparSonAuteur
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the commentaire.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  /api/admin/utilisateurs:
+    get:
+      summary: '👥 Liste de tous les utilisateurs'
+      operationId: ListeDeTousLesUtilisateurs
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  '/api/admin/utilisateurs/{id}':
+    get:
+      summary: '🔍 Détails d’un utilisateur : ses activités, tâches et commentaires'
+      operationId: DtailsDunUtilisateurSesActivitsTchesEtCommentaires
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the utilisateur.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  /api/admin/statistiques:
+    get:
+      summary: "📊 Affiche les statistiques globales (pour l'administrateur)"
+      operationId: AfficheLesStatistiquesGlobalespourLadministrateur
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  '/api/activites/{id}/rappel':
+    get:
+      summary: '🔍 Voir le rappel défini pour une activité'
+      operationId: VoirLeRappelDfiniPourUneActivit
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: '🟢 Définir ou modifier un rappel personnalisé'
+      operationId: DfinirOuModifierUnRappelPersonnalis
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rappel_personnalise:
+                  type: integer
+                  description: 'Must be at least 10. Must not be greater than 10080.'
+                  example: 21
+                  nullable: false
+              required:
+                - rappel_personnalise
+      security: []
+    delete:
+      summary: '🗑️ Supprimer le rappel personnalisé'
+      operationId: SupprimerLeRappelPersonnalis
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the activite.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  /api/profile:
+    get:
+      summary: '🟢 Afficher le profil utilisateur connecté'
+      operationId: AfficherLeProfilUtilisateurConnect
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: '🔴 Supprimer le compte utilisateur connecté'
+      operationId: SupprimerLeCompteUtilisateurConnect
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                confirmation:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+              required:
+                - confirmation
+      security: []
+  /api/profile/update:
+    put:
+      summary: '🟢 Mettre à jour le nom et/ou le mot de passe'
+      operationId: MettreJourLeNomEtouLeMotDePasse
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: vmqeopfuudtdsufvyvddq
+                  nullable: true
+                old_password:
+                  type: string
+                  description: ''
+                  example: consequatur
+                  nullable: true
+                new_password:
+                  type: string
+                  description: 'Must be at least 6 characters.'
+                  example: mqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjury
+                  nullable: true
+      security: []
+  /api/profile/request-email-change:
+    post:
+      summary: '🟢 Demande de changement d’e-mail — envoie un code de vérification'
+      operationId: DemandeDeChangementDeMailEnvoieUnCodeDeVrification
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_email:
+                  type: string
+                  description: ''
+                  example: null
+                  nullable: false
+      security: []
+  /api/profile/verify-email-change:
+    post:
+      summary: '🟢 Vérifier le code et valider le changement d’e-mail'
+      operationId: VrifierLeCodeEtValiderLeChangementDeMail
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 'Must be 6 digits.'
+                  example: '810798'
+                  nullable: false
+              required:
+                - code
+      security: []

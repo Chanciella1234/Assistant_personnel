@@ -31,6 +31,55 @@ class ProfileController extends Controller
     }
 
     /**
+     * 🟢 Mettre à jour le nom et/ou le mot de passe
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'old_password' => 'nullable|string',
+            'new_password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // 🟣 Modifier le nom s’il est fourni
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+
+        // 🟣 Changement du mot de passe
+        if ($request->filled('old_password') || $request->filled('new_password')) {
+            // Vérification des deux champs
+            if (!$request->filled('old_password') || !$request->filled('new_password')) {
+                throw ValidationException::withMessages([
+                    'password' => 'Vous devez fournir l’ancien et le nouveau mot de passe.',
+                ]);
+            }
+
+            // Vérification de l’ancien mot de passe
+            if (!Hash::check($request->old_password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'old_password' => 'L’ancien mot de passe est incorrect.',
+                ]);
+            }
+
+            // Validation du nouveau mot de passe
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profil mis à jour avec succès.',
+            'data' => [
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+        ]);
+    }
+
+    /**
      * 🟢 Demande de changement d’e-mail — envoie un code de vérification
      */
     public function requestEmailChange(Request $request)

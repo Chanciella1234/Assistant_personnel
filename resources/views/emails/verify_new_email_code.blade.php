@@ -10,7 +10,7 @@ Veuillez utiliser le code de vérification ci-dessous pour confirmer cette actio
 </h2>
 @endcomponent
 
-👉 <strong>Ce code est valable pendant 15 minutes.</strong>
+👉 <strong>Ce code est valable pendant 30 minutes.</strong>
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:20px 0;">
 

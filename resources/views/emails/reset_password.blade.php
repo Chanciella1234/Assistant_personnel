@@ -12,12 +12,8 @@ Veuillez utiliser le code ci-dessous pour finaliser la procédure :
 </h2>
 @endcomponent
 
-⏳ **Ce code est valable pendant 15 minutes.**  
+⏳ **Ce code est valable pendant 30 minutes.**  
 Saisissez-le dans l’application pour définir un **nouveau mot de passe sécurisé**.
-
-
-Si vous n’avez pas demandé cette action, vous pouvez **ignorer cet email en toute sécurité**.  
-Aucun changement ne sera effectué sur votre compte.
 
 Merci pour votre confiance 💙  
 **L’équipe LifePlanner**
