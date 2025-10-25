@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->enum('role', ['user', 'admin'])->default('user')->after('email');
             $table->boolean('is_verified')->default(false)->after('role');
             $table->string('verification_token')->nullable()->after('is_verified');
-            $table->integer('rappel_personnalise')->nullable()->comment('minutes')->after('verification_token');
+            // $table->integer('rappel_personnalise')->nullable()->comment('minutes')->after('verification_token');
             $table->string('langue')->default('fr')->after('rappel_personnalise');
             $table->string('theme')->default('clair')->after('langue');
         });

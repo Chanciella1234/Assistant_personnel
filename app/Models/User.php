@@ -19,7 +19,6 @@ class User extends Authenticatable
         'role',
         'is_verified',
         'code_activation',
-        'rappel_personnalise',
         'langue',
         'theme',
         'reset_code',
