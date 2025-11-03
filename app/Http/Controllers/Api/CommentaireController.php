@@ -10,18 +10,29 @@ use Illuminate\Support\Facades\Auth;
 class CommentaireController extends Controller
 {
     /**
-     * 📋 Liste des commentaires de l’utilisateur connecté
+     * 📋 Liste de tous les commentaires (avec noms des utilisateurs, sans emails)
      */
     public function index()
     {
-        $user = Auth::user();
-
-        $commentaires = Commentaire::where('user_id', $user->id)
+        $commentaires = Commentaire::with('user:id,name')
             ->orderByDesc('created_at')
-            ->get(['id', 'contenu', 'created_at', 'updated_at']); // on récupère aussi les dates
+            ->get()
+            ->map(function ($commentaire) {
+                return [
+                    'id' => $commentaire->id,
+                    'contenu' => $commentaire->contenu,
+                    'created_at' => $commentaire->created_at,
+                    'updated_at' => $commentaire->updated_at,
+                    'date_commentaire' => $commentaire->date_commentaire,
+                    'user' => [
+                        'id' => $commentaire->user->id,
+                        'name' => $commentaire->user->name,
+                    ],
+                ];
+            });
 
         return response()->json([
-            'message' => 'Liste de vos commentaires récupérée avec succès.',
+            'message' => 'Liste des commentaires récupérée avec succès.',
             'data' => $commentaires,
         ]);
     }
@@ -50,7 +61,7 @@ class CommentaireController extends Controller
         ], 201);
     }
 
-    /**
+    /**cf
      * 🟡 Modifier un commentaire (uniquement par son auteur)
      */
     public function update(Request $request, $id)
@@ -85,6 +96,42 @@ class CommentaireController extends Controller
 
         return response()->json([
             'message' => 'Commentaire supprimé avec succès.',
+        ]);
+    }
+
+    /**
+     * 👑 Liste de tous les commentaires pour les admins (avec noms des utilisateurs)
+     */
+    public function adminIndex()
+    {
+        // Vérifier que l'utilisateur est admin
+        if (Auth::user()->role !== 'admin') {
+            return response()->json([
+                'message' => 'Accès refusé. Réservé aux administrateurs.',
+            ], 403);
+        }
+
+        $commentaires = Commentaire::with('user:id,name,email')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($commentaire) {
+                return [
+                    'id' => $commentaire->id,
+                    'contenu' => $commentaire->contenu,
+                    'created_at' => $commentaire->created_at,
+                    'updated_at' => $commentaire->updated_at,
+                    'date_commentaire' => $commentaire->date_commentaire,
+                    'user' => [
+                        'id' => $commentaire->user->id,
+                        'name' => $commentaire->user->name,
+                        'email' => $commentaire->user->email,
+                    ],
+                ];
+            });
+
+        return response()->json([
+            'message' => 'Liste de tous les commentaires récupérée avec succès.',
+            'data' => $commentaires,
         ]);
     }
 }

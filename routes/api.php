@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CommentaireController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminStatistiquesController;
 use App\Http\Controllers\Api\AlerteController;
+use Illuminate\Support\Facades\Route;
 
 
 // Authentication routes
@@ -60,8 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //Commentaires routes
+Route::get('/commentaires', [CommentaireController::class, 'index']); // Public - tous les commentaires
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/commentaires', [CommentaireController::class, 'index']);
     Route::post('/commentaires', [CommentaireController::class, 'store']);
     Route::put('/commentaires/{id}', [CommentaireController::class, 'update']);
     Route::delete('/commentaires/{id}', [CommentaireController::class, 'destroy']);
@@ -73,6 +74,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // 🟢 Routes Admin (lecture seule)
     Route::get('/admin/utilisateurs', [AdminController::class, 'index']);
     Route::get('/admin/utilisateurs/{id}', [AdminController::class, 'show']);
+
+    // 👑 Commentaires Admin
+    Route::get('/admin/commentaires', [CommentaireController::class, 'adminIndex']);
 });
 
 

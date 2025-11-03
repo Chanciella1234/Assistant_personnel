@@ -94,7 +94,6 @@ class PasswordResetController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'reset_code' => 'required|digits:6',
             'new_password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -105,27 +104,14 @@ class PasswordResetController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !$user->reset_code || !$user->reset_code_expires_at) {
+        if (!$user) {
             RateLimiter::hit($key, 600);
-            return response()->json(['message' => 'Code invalide ou expiré.'], 400);
+            return response()->json(['message' => 'Utilisateur non trouvé.'], 404);
         }
 
-        if (Carbon::now()->greaterThan($user->reset_code_expires_at)) {
-            $user->update(['reset_code' => null, 'reset_code_expires_at' => null]);
-            RateLimiter::hit($key, 600);
-            return response()->json(['message' => 'Code invalide ou expiré.'], 400);
-        }
-
-        if (!Hash::check($request->reset_code, $user->reset_code)) {
-            RateLimiter::hit($key, 600);
-            return response()->json(['message' => 'Code invalide ou expiré.'], 400);
-        }
-
-        // ✅ Réinitialisation
+        // ✅ Réinitialisation directe (sans vérification de code)
         $user->update([
             'password' => bcrypt($request->new_password),
-            'reset_code' => null,
-            'reset_code_expires_at' => null,
         ]);
 
         RateLimiter::clear($key);

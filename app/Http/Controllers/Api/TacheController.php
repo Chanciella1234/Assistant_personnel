@@ -94,8 +94,6 @@ class TacheController extends Controller
             'data' => $tache
         ]);
     }
-}
-
 
     /**
      * 🗑️ Supprimer une tâche
