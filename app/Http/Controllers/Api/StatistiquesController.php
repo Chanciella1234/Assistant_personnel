@@ -343,4 +343,50 @@ class StatistiquesController extends Controller
             'variation_pourcentage' => $variation . '%'
         ];
     }
+
+    /**
+     * 📊 Statistiques détaillées des statuts pour activités et tâches
+     */
+    public function statutsDetailles()
+    {
+        $user = Auth::user();
+
+        // Statistiques des activités
+        $activitesStats = Activite::where('user_id', $user->id)
+            ->selectRaw('statut, COUNT(*) as total')
+            ->groupBy('statut')
+            ->pluck('total', 'statut')
+            ->toArray();
+
+        $activites = [
+            'terminees' => $activitesStats['terminee'] ?? 0,
+            'en_cours' => $activitesStats['en cours'] ?? 0,
+            'en_attente' => $activitesStats['en attente'] ?? 0,
+            'en_retard' => $activitesStats['en_retard'] ?? 0,
+        ];
+
+        // Statistiques des tâches
+        $tachesStats = Tache::whereHas('activite', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+            ->selectRaw('statut, COUNT(*) as total')
+            ->groupBy('statut')
+            ->pluck('total', 'statut')
+            ->toArray();
+
+        $taches = [
+            'terminees' => $tachesStats['terminee'] ?? 0,
+            'en_cours' => $tachesStats['en cours'] ?? 0,
+            'en_attente' => $tachesStats['en attente'] ?? 0,
+            'en_retard' => $tachesStats['en_retard'] ?? 0,
+        ];
+
+        return response()->json([
+            'message' => 'Statistiques détaillées des statuts récupérées avec succès.',
+            'data' => [
+                'activites' => $activites,
+                'taches' => $taches,
+            ],
+        ]);
+    }
 }

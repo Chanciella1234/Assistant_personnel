@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //Statistiques routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/statistiques/activites', [StatistiquesController::class, 'index']);
+    Route::get('/statistiques/statuts-detailles', [StatistiquesController::class, 'statutsDetailles']);
 });
 
 //Commentaires routes
@@ -83,6 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //Statistiques pour Admin routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/statistiques', [AdminStatistiquesController::class, 'index']);
+    Route::get('/admin/statistiques/user-progression/{userId}', [AdminStatistiquesController::class, 'userProgression']);
+    Route::get('/admin/statistiques/users-evolution', [AdminStatistiquesController::class, 'usersEvolution']);
 });
 
 
